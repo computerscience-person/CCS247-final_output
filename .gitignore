@@ -1,1 +1,5 @@
 .direnv
+.ipynb_checkpoints
+tests
+scikit-learn-contrib category_encoders 2.6.3 tests.zip
+.virtual_documents

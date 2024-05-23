@@ -8,25 +8,16 @@
   outputs = { self, nixpkgs }: 
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system ; };
-      category-encoders = let
-        pname = "category-encoders";
-        version = "2.6.3";
-      in pkgs.python3Packages.buildPythonPackage {
-        inherit pname version;
-        src = pkgs.fetchurl {
-          # inherit pname version;
-          url = "https://files.pythonhosted.org/packages/3f/21/79a3fdf7998035ddd601ed4df6ac8b1e273ec61b30c05cf18df0042e308f/category_encoders-2.6.3.tar.gz";
-          sha256 = "d9f14705ed4b536eaf9cfc81b76d67a50b2f16f8f3eda498c57d7da19655530c";
-        };
-        buildInputs = with pkgs.python3Packages; [
-          numpy
-          scikit-learn
-          scipy
-          statsmodels
-          pandas
-          patsy
-        ];
+      pkgs = nixpkgs.legacyPackages.${system};
+      pyPkgs = pkgs.python3Packages;
+      category-encoders = pkgs.callPackage ./category-encoders.nix { 
+        buildPythonPackage = pyPkgs.buildPythonPackage;
+        numpy = pyPkgs.numpy;
+        scikit-learn = pyPkgs.scikit-learn;
+        scipy = pyPkgs.scipy;
+        statsmodels = pyPkgs.statsmodels;
+        pandas = pyPkgs.pandas;
+        patsy = pyPkgs.patsy;
       };
     in
   {
@@ -47,6 +38,8 @@
         python3Packages.python-lsp-server
         # Not in nixpkgs
         category-encoders
+        # Test category-encoders
+        python3Packages.pytest
         # Non-python dependencies
         graphviz
       ];
